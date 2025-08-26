@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Votre code OTP - Klaces</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&family=Open+Sans&display=swap');
+
+        body {
+            font-family: 'Open Sans', Arial, sans-serif;
+            background: linear-gradient(120deg, #f7f7fa, #e8e6f7);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            padding: 40px 30px;
+            animation: fadeIn 1s ease;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .logo img {
+            width: 90px;
+        }
+        h2 {
+            font-family: 'Montserrat', sans-serif;
+            color: #4b3ca7;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .info {
+            color: #555;
+            text-align: center;
+            margin-bottom: 16px;
+            font-size: 0.95em;
+        }
+        .otp {
+            font-size: 2.5em;
+            color: #7B61FF; /* violet logo */
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 8px;
+            margin: 24px 0;
+            background: #f3e8ff;
+            border-radius: 12px;
+            padding: 12px 0;
+        }
+        .footer {
+            text-align: center;
+            color: #aaa;
+            font-size: 0.9em;
+            margin-top: 32px;
+        }
+        @keyframes fadeIn {
+            from {opacity:0; transform: translateY(-10px);}
+            to {opacity:1; transform: translateY(0);}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="https://media.discordapp.net/attachments/1267407285165232199/1408948758758031560/IMG-20250823-WA0080-removebg-preview.png?ex=68ae3c49&is=68aceac9&hm=6a1114833e529ae7eba225489d495f3aa7e9984574b15ec55693fd97bdb925f2&=&format=webp&quality=lossless" alt="Klaces Logo" />
+        </div>
+        <h2>Bienvenue sur Klaces !</h2>
+        <div class="info">
+            Bonjour {{ user.full_name }},<br>
+            Voici votre code de vérification pour accéder à votre compte Klaces :
+        </div>
+        <div class="otp">{{ otp }}</div>
+        <div class="info">
+            Ce code est valable pendant 10 minutes.<br>
+            Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.
+        </div>
+        <div class="footer">
+            &copy; {{ current_site }} - Klaces {{ now|date:'Y' }}<br>
+            Merci de votre confiance !
+        </div>
+    </div>
+</body>
+</html>

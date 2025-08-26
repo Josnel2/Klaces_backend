@@ -11,6 +11,12 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from  decouple import config
+
+
+
+# Load environment variables from .env file
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'corsheaders',
     'manage_users',
 ]
 
@@ -55,7 +64,7 @@ ROOT_URLCONF = 'klaces_backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -67,6 +76,20 @@ TEMPLATES = [
     },
 ]
 
+
+# CACHES = {
+#             "default": {
+#                 "BACKEND": "django_redis.cache.RedisCache",
+#                 "LOCATION": config("REDIS_HOST"),
+#                 "OPTIONS": {
+#                     "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#                     "PASSWORD": config("REDIS_PASSWORD"),
+#                     "SOCKET_CONNECT_TIMEOUT": 10,
+#                     "SOCKET_TIMEOUT": 5,
+#                     "ssl": True
+#                 }
+#             }
+#         }
 WSGI_APPLICATION = 'klaces_backend.wsgi.application'
 
 
@@ -116,8 +139,19 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+AUTH_USER_MODEL = 'manage_users.User'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_HOST = config("EMAIL_HOST")
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = config("EMAIL_PORT")
+EMAIL_USE_TLS = config("EMAIL_USE_TLS")
+# CELERY_BROKER_URL = config("CELERY_BROKER_URL")
+# CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND")
