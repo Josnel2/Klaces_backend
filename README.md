@@ -28,11 +28,11 @@ Backend Django pour la gestion des utilisateurs et des fonctionnalités de l'app
 
 1. Appliquer les migrations :
    ```powershell
-   python klaces_backend/manage.py migrate
+   python manage.py migrate
    ```
 2. Lancer le serveur de développement :
    ```powershell
-   python klaces_backend/manage.py runserver
+   python manage.py runserver
    ```
 
 ## Gestion des branches Git
