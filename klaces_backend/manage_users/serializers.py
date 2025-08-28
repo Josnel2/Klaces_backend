@@ -2,6 +2,9 @@ from rest_framework import serializers
 from .models import User,OneTimePasscode
 from django.contrib.auth import authenticate, login
 from rest_framework.exceptions import AuthenticationFailed
+from .utils import generate_otp
+from django.utils import timezone
+from datetime import timedelta
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
@@ -60,3 +63,6 @@ class UserLoginSerializer(serializers.ModelSerializer):
             'access_token': str(tokens.get('access')),
             'refresh_token': str(tokens.get('refresh')),
         }
+
+   
+
