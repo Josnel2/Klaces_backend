@@ -18,6 +18,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
+    # reset_password_token = models.CharField(max_length=100, blank=True, null=True)
+    
 
     objects = UserManager()
 
