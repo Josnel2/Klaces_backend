@@ -64,8 +64,11 @@ class LoginUserView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+
+    
     
 class UserDetailView(RetrieveAPIView):
     queryset = User.objects.all()  
     serializer_class = UserRegisterSerializer  
     permission_classes = [IsUser, IsManager]
+    

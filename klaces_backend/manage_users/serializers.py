@@ -64,5 +64,4 @@ class UserLoginSerializer(serializers.ModelSerializer):
             'refresh_token': str(tokens.get('refresh')),
         }
 
-   
 
