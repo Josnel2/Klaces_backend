@@ -6,3 +6,4 @@ pillow
 celery
 python-decouple
 django_redis
+drf-yasg
