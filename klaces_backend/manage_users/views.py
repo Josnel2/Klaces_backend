@@ -2,14 +2,13 @@ from django.shortcuts import render
 from .models import User, OneTimePasscode
 from .serializers import UserLoginSerializer, UserRegisterSerializer, VerifyEmailSerializer
 from rest_framework.generics import GenericAPIView
-from rest_framework import status
+from rest_framework import status,generics
 from rest_framework.response import Response
 from .utils import send_otp_email
 import logging
 from rest_framework.permissions import AllowAny
 from rest_framework.generics import RetrieveAPIView
 from .permissions import IsUser, IsManager
-
 logger = logging.getLogger(__name__)
 
 class UserRegisterView(GenericAPIView):
@@ -63,12 +62,14 @@ class LoginUserView(GenericAPIView):
         serializer = self.serializer_class(data=request.data, context={'request':request})
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
 
-    
-    
+class UpdateProfileView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserRegisterSerializer
+    permission_classes = [IsUser]
+
 class UserDetailView(RetrieveAPIView):
     queryset = User.objects.all()  
     serializer_class = UserRegisterSerializer  
-    permission_classes = [IsUser, IsManager]
+    permission_classes = [IsUser]
     
