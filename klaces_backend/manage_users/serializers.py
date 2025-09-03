@@ -5,7 +5,11 @@ from rest_framework.exceptions import AuthenticationFailed
 from .utils import generate_otp
 from django.utils import timezone
 from datetime import timedelta
-
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import smart_bytes, force_str
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils import timezone
+from .utils import generate_otp, send_normal_email
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=68, min_length=8, write_only=True)
