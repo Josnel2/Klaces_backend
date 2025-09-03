@@ -55,3 +55,12 @@ def send_otp_email(user):
     except Exception as e:
         logger.error(f"Erreur OTP : {str(e)}")
         return False
+
+def send_normal_email(data):
+    email=EmailMessage(
+        subject=data['email_subject'],
+        body=data['email_body'],
+        from_email=settings.EMAIL_HOST_USER,
+        to=[data['to_email']]
+    )
+    email.send()
