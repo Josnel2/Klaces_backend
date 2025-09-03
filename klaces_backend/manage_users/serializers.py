@@ -65,3 +65,83 @@ class UserLoginSerializer(serializers.ModelSerializer):
         }
 
 
+class PasswordResetRequestSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(max_length=255)
+
+    class Meta:
+        model = User
+        fields = ['email']
+
+    def validate(self, attrs):
+        email = attrs.get('email')
+        user = User.objects.filter(email=email).first()
+
+        if not user:
+            raise serializers.ValidationError("No user found with this email address.")
+
+        # Supprimer les anciens OTP
+        OneTimePasscode.objects.filter(user=user).delete()
+
+        # Générer un nouveau code OTP
+        code = generate_otp()
+        expires_at = timezone.now() + timezone.timedelta(minutes=10)
+        OneTimePasscode.objects.create(user=user, code=code, expires_at=expires_at)
+
+        # Envoyer l'email
+        email_body = f"Hi {user.full_name or 'user'},\n\nUse this code to reset your password: {code}\n\nThis code will expire in 10 minutes."
+        send_normal_email({
+            'email_body': email_body,
+            'email_subject': 'Your code for password reset',
+            'to_email': user.email
+        })
+
+        return attrs
+
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    code = serializers.CharField(max_length=6)
+
+    def validate(self, attrs):
+        code = attrs.get('code')
+        try:
+            otp_record = OneTimePasscode.objects.get(code=code)
+        except OneTimePasscode.DoesNotExist:
+            raise serializers.ValidationError("Invalid code.")
+
+        if otp_record.is_expired():
+            raise serializers.ValidationError("Code has expired.")
+
+        user_id = otp_record.user.id
+        attrs['uidb64'] = urlsafe_base64_encode(smart_bytes(user_id))
+        attrs['token'] = PasswordResetTokenGenerator().make_token(otp_record.user)
+        return attrs
+
+
+class SetNewPasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(min_length=6, write_only=True)
+    confirm_password = serializers.CharField(min_length=6, write_only=True)
+    uidb64 = serializers.CharField(write_only=True)
+    token = serializers.CharField(write_only=True)
+
+    def validate(self, attrs):
+        password = attrs.get('password')
+        confirm_password = attrs.get('confirm_password')
+        uidb64 = attrs.get('uidb64')
+        token = attrs.get('token')
+
+        if password != confirm_password:
+            raise AuthenticationFailed("Passwords do not match.")
+
+        try:
+            user_id = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(id=user_id)
+        except Exception:
+            raise AuthenticationFailed("Invalid reset element.")
+
+        if not PasswordResetTokenGenerator().check_token(user, token):
+            raise AuthenticationFailed("Token is invalid or has expired.")
+
+        user.set_password(password)
+        user.save()
+
+        return {"message": "Password reset successful."}
