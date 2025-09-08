@@ -2,20 +2,18 @@ FROM python:3.12-slim-bookworm
 
 WORKDIR /app
 
-#Variables d'environnement
+# Copier le fichier .env dans le conteneur
+COPY .env .env
 
-ENV EMAIL_HOST=smtp.gmail.com
-ENV EMAIL_HOST_USER=klaces237@gmail.com
-ENV EMAIL_HOST_PASSWORD="ljbr paez vugc llrw"
-ENV EMAIL_PORT=587
-ENV EMAIL_USE_TLS=True
-
-COPY . .
-
+# Copier et installer les dépendances
 COPY requirements.txt .
-
 RUN pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 8000
+# Copier le reste du code
+COPY . .
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Exposer le port Django
+EXPOSE 8085
+
+# Lancer Django
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8085"]
