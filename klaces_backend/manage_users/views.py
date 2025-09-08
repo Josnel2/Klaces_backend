@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import User, OneTimePasscode
-from .serializers import UserLoginSerializer, UserRegisterSerializer, VerifyEmailSerializer
+from .serializers import UserLoginSerializer, UserRegisterSerializer, VerifyEmailSerializer,PasswordResetConfirmSerializer,SetNewPasswordSerializer,PasswordResetRequestSerializer
 from rest_framework.generics import GenericAPIView
 from rest_framework import status,generics
 from rest_framework.response import Response
@@ -10,6 +10,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.generics import RetrieveAPIView
 from .permissions import IsUser, IsManager
 logger = logging.getLogger(__name__)
+from rest_framework.views import APIView
+
 
 class UserRegisterView(GenericAPIView):
     serializer_class = UserRegisterSerializer
@@ -73,3 +75,36 @@ class UserDetailView(RetrieveAPIView):
     serializer_class = UserRegisterSerializer  
     permission_classes = [IsUser]
     
+
+class PasswordResetRequestView(APIView):
+    permission_classes = [AllowAny]
+    serializer_class = PasswordResetRequestSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        return Response({"message": "OTP sent successfully"}, status=status.HTTP_200_OK)
+
+
+class PasswordResetConfirmView(APIView):
+    permission_classes = [AllowAny]
+    serializer_class = PasswordResetConfirmSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response({
+            "message": "OTP verified successfully.",
+            "uidb64": serializer.validated_data['uidb64'],
+            "token": serializer.validated_data['token']
+        }, status=status.HTTP_200_OK)
+
+
+class SetNewPasswordView(APIView):
+    permission_classes = [AllowAny]
+    serializer_class = SetNewPasswordSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)

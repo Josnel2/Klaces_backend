@@ -14,6 +14,8 @@ from pathlib import Path
 import os
 from  decouple import config
 
+ENV = 'dev'
+
 
 
 # Load environment variables from .env file
@@ -160,3 +162,26 @@ EMAIL_PORT = config("EMAIL_PORT")
 EMAIL_USE_TLS = config("EMAIL_USE_TLS")
 # CELERY_BROKER_URL = config("CELERY_BROKER_URL")
 # CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND")
+
+if ENV=="dev":
+         
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': config('PG_DBNAME'),
+                'USER': config('PG_USER'),
+                'PASSWORD': config('PG_PASSWORD'),
+                'HOST': config('PG_HOST'),
+                'PORT': config('PG_PORT'),
+            }
+        }
+else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+
+
+
