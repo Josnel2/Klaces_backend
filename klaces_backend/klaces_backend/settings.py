@@ -13,7 +13,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 from  decouple import config
-
+from datetime import timedelta
+from corsheaders.defaults import default_headers
 ENV = 'dev'
 
 
@@ -33,11 +34,42 @@ SECRET_KEY = 'django-insecure-ca*5t9sqd$&$xn6*sw+r9m7_rfrn1qzf7x4v+wyil(kj)kw#*p
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
-# Application definition
+CSRF_TRUSTED_ORIGINS = ['https://sandbox.devxs.xyz/klaces/',]
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': [
+    'django_filters.rest_framework.DjangoFilterBackend',
+    'rest_framework.filters.SearchFilter',
+    'rest_framework.filters.OrderingFilter',
+],
 
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '10/minute',   # visiteurs non connectés (agressif)
+        'user': '100/hour',    # utilisateurs connectés
+    },
+
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "authorization",
+]
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -50,6 +82,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'manage_users',
     'drf_yasg',
+    'django_filters',
+    
 ]
 
 MIDDLEWARE = [
@@ -183,5 +217,8 @@ else:
             }
         }
 
-
-
+SECURE_HSTS_SECONDS = 31536000  # 1 an
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True

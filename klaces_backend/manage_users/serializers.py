@@ -149,3 +149,4 @@ class SetNewPasswordSerializer(serializers.Serializer):
         user.save()
 
         return {"message": "Password reset successful."}
+
