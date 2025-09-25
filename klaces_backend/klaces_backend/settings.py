@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'manage_users',
+    'manage_places',
     'drf_yasg',
     'django_filters',
     
