@@ -48,6 +48,7 @@ class Api_place(APIView):
 
     def post(self, req: Request):
 
+        print(req.data)
         place = Place()
         place.name = req.data["name"]
         place.location = req.data["location"]
@@ -55,3 +56,10 @@ class Api_place(APIView):
         place.place_type = req.data["place_type"]
 
         place.save()
+        json_place = {
+            "name": place.name,
+            "location": place.location,
+            "place type": place.place_type,
+            "etoiles": place.etoiles
+        }
+        return Response(data=json_place, status=200)
